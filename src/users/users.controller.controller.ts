@@ -25,7 +25,8 @@ export class UsersController {
     
     
     @Post()
-    createUser(@Body(new ValidationPipe()) user: CreateUserDto)  {
+    createUser(@Body() user: CreateUserDto)  {
+        log(user instanceof CreateUserDto);
         return 'User created successfully';
         // this.usersService.createUser(req.body)
     }
