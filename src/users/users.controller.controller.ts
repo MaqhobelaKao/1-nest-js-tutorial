@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query } from "@nestjs/common";
+import { Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Post, Query } from "@nestjs/common";
 import { UsersService } from "./user.service";
 import { log } from "console";
 
@@ -8,17 +8,17 @@ export class UsersController {
     constructor(private usersService: UsersService) {}
 
     @Get()
-    getUsers (@Query() query: any) {
-        const { gender, isMarried } = query;
-        if(gender){
-            return this.usersService.getUsers().filter(user => user.gender === gender)
-        }
+    getUsers (@Query('limit', 
+                    new DefaultValuePipe(10), ParseIntPipe) limit: number, 
+                @Query('page',new DefaultValuePipe(1), ParseIntPipe) page: number
+            ) 
+                {
+        log(limit, page);
         return this.usersService.getUsers();
     }
 
     @Get(':id')
-    getUserById(@Param() param) {
-       var { id }  = param;
+    getUserById(@Param('id', ParseIntPipe) id) {
         return this.usersService.getUserById(parseInt(id));
     }
     
