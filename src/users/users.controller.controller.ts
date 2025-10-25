@@ -3,6 +3,7 @@ import { UsersService } from "./user.service";
 import { log } from "console";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { GetUserParamDto } from "./dtos/get-user-param.dto";
+import { UpdateUserDto } from "./dtos/updatet-user.dto";
 
 
 @Controller('users')
@@ -38,7 +39,8 @@ export class UsersController {
     }
 
     @Patch()
-    updateUser() {
+    updateUser(@Body() user: UpdateUserDto) {
+        console.log(user);
         return 'User updated successfully';
     }
 }
