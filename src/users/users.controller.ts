@@ -13,15 +13,12 @@ export class UsersController {
 
     
     
-    @Get(':isMarried')
+    @Get('')
     getUsers (@Query('limit', 
                 new DefaultValuePipe(10), ParseIntPipe) limit: number, 
                 @Query('page',new DefaultValuePipe(1), ParseIntPipe) page: number,
-                @Param() param: GetUserParamDto
             ) 
                 {
-        log(param);
-        log(param);
         return this.usersService.getUsers();
     }
 
