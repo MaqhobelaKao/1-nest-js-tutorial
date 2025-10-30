@@ -1,61 +1,35 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
+import { Injectable } from '@nestjs/common';
+import { User } from './user.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class UsersService {
-   users: {
-    id: number;
-    name: string;
-    age: number;
-    gender: string;
-    email: string;
-    isMarried: boolean;
-    password: string;
-  }[] = [
-    {
-      id: 1,
-      name: 'Kao',
-      age: 23,
-      gender: 'f',
-      isMarried: true,
-      password: '12345',
-      email: 'kao@company.com'
-    },
-    {
-      id: 2,
-      name: 'Lereko',
-      age: 12,
-      gender: 'M',
-      email: "lereko@company.com",
-      isMarried: false,
-      password: '12345',
-    },
-  ];
 
   constructor(
-    @Inject(forwardRef(()=> AuthService)) private readonly authService: AuthService
+    @InjectRepository(User) 
+    private userRepository: Repository<User>
   ) {}
 
   getUsers() {
-    if(!this.authService.isLoggedIn()){
-      throw new Error('User not authenticated');
+    return this.userRepository.find();
+  }
+
+  async getUserById(id: number) {
+    return await this.userRepository.findOne({where: {id}});
+  }
+
+  public async createUser(user: CreateUserDto){
+    // validate if the user exist with the same email
+    const userRecord = await this.userRepository.findOne({where: {email: user.email}})
+
+    // handle the error
+    if(userRecord) {
+      throw new Error('User with the same email already exists');
     }
-    return this.users;
-  }
 
-  getUserById(id: number) {
-    return this.users.find((user) => user.id === id);
-  }
-
-  createUser(user: {
-    id: number;
-    name: string;
-    age: number;
-    gender: string;
-    email: string;
-    isMarried: boolean;
-    password: string;
-  }) {
-    this.users.push(user);
+    // inset the user into the database
+    return await this.userRepository.save(user);
   }
 }

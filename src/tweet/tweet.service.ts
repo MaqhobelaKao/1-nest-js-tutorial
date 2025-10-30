@@ -16,6 +16,6 @@ export class TweetService {
         const user = this.userService.getUserById(userId);
         const twees = this.tweets.filter(tweet => tweet.userId === userId);
 
-        return twees.map(tweet => ({tweet: tweet.text, date: tweet.date, user: user?.name}));
+        return [];
     }
 }

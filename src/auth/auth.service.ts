@@ -11,10 +11,10 @@ export class AuthService {
 
  
   logIn(email: string, password: string) {
-    const user = this.userService
-      .users
-      .find((user) => user.email === email && user.password === password);
-    if (user) {
+    const user = this.userService.getUsers().then(
+      (user) => user.find(u => u.email === email && u.password === password),
+    );
+    if (user != undefined) {
       this.IsAuthenticated = true;
       return { message: 'Login successful', token: 'TOKEN' };
     } else {
