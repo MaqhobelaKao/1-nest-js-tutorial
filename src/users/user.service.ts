@@ -17,11 +17,7 @@ export class UsersService {
   ) {}
 
   getUsers() {
-    return this.userRepository.find({
-      relations: {
-        profile: true,
-      },
-    });
+    return this.userRepository.find();
   }
 
   async getUserById(id: number) {
