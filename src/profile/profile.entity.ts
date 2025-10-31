@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/users/user.entity";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Profile {
@@ -45,4 +46,8 @@ export class Profile {
         nullable: true,
     })
     profileIMage?: string;
+
+    @OneToOne(() => User, (user)=>user.profile, {onDelete: 'CASCADE'})
+    @JoinColumn()
+    user: User
 }

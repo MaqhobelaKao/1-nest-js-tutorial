@@ -17,7 +17,11 @@ export class UsersService {
   ) {}
 
   getUsers() {
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: {
+        profile: true,
+      },
+    });
   }
 
   async getUserById(id: number) {
@@ -38,4 +42,10 @@ export class UsersService {
     // save user to database
     return await this.userRepository.save(user);
   }
+
+
+  public async deleteUser(id: number) {
+    return await this.userRepository.delete(id);
+  }
+
 }
