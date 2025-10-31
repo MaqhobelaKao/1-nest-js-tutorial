@@ -10,39 +10,39 @@ export class Profile {
         length: 100,
         nullable: true,
     })
-    firstName: string;
+    firstName?: string;
 
     @Column({
         type: 'varchar',
         length: 100,
         nullable: true,
     })
-    lastName: string;
+    lastName?: string;
 
     @Column({
         type: 'char',
         length: 1,
         nullable: true
     })
-    gender: string;
+    gender?: string;
 
     @Column({
         type: 'timestamp',
         nullable: true,
 
     })
-    dateOfBirth: Date;
+    dateOfBirth?: Date;
 
     @Column({
         type: 'text',
         nullable: true,
     })
-    bio: string
+    bio?: string
 
     @Column({
         type: 'varchar',
         length: 255,
         nullable: true,
     })
-    profileIMage: string;
+    profileIMage?: string;
 }
