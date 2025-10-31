@@ -26,14 +26,14 @@ export class UsersService {
 
   public async createUser(userDto: CreateUserDto){
     // Create profile if provided
-    userDto.profile = userDto.profile ?? {};
-    let profile  =  this.profileRepository.create(userDto.profile);
-    await this.profileRepository.save(profile);
-    
+
+
     // create user object
-    let user = this.userRepository.create({
-      ...userDto,
-      profile: userDto.profile,
+    const user = this.userRepository.create({
+      email: userDto.email,
+      username: userDto.username,
+      password: userDto.password,
+      profile: userDto.profile ? this.profileRepository.create(userDto.profile) : {},
     });
     // save user to database
     return await this.userRepository.save(user);

@@ -20,7 +20,7 @@ export class User {
     @Column()
     password: string;
 
-    @OneToOne(() => Profile, { cascade: true, eager: true })
+    @OneToOne(() => Profile, { cascade: ['insert', 'update', 'remove'], })
     @JoinColumn()
     profile?: Profile
 
