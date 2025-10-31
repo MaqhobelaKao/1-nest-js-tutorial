@@ -46,4 +46,17 @@ export class TweetService {
             },
         })
     }
+
+    public async getTweetsByUserId(userId: number): Promise<Tweet[]> {
+        return this.tweetRepository.find({
+            where: {
+                user: {
+                    id: userId,
+                },
+            },
+            relations: {
+                user: false,
+            },
+        });
+    }
 }

@@ -21,5 +21,10 @@ export class TweetController {
     @Post()
     public createTweet(@Body() createTweetDto: CreateTweetDto) {
         return this.tweetService.createTweet(createTweetDto);
-    }   
+    }
+
+    @Get(':userId/tweets')
+    public getTweetsForUser(@Param('userId', ParseIntPipe) userId: number) {
+        return this.tweetService.getTweetsByUserId(userId);
+    }
 }
