@@ -4,6 +4,9 @@ import { Repository } from 'typeorm';
 import { Tweet } from './tweet.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTweetDto } from './dto/create-tweet.dto';
+import { HashtagService } from 'src/hasgtag/hashtag.service';
+import { log } from 'console';
+import { UpdateTweetDto } from './dto/update-tweet.dto';
 
 @Injectable()
 export class TweetService {
@@ -12,11 +15,15 @@ export class TweetService {
         @InjectRepository(Tweet)
         private readonly tweetRepository: Repository<Tweet>,
         private readonly usersService: UsersService,
+        private readonly hashtagService: HashtagService,
     ) {}
 
 
     public async createTweet(createTweetDto: CreateTweetDto): Promise<Tweet> {
         const user = await this.usersService.getUserById(createTweetDto.userId);
+        const hashtags = await this.hashtagService.findHashtags(createTweetDto.hashtags!);
+
+        log('hashtags are ', hashtags);
 
         if(!user) {
             throw new Error('User not found');
@@ -25,6 +32,7 @@ export class TweetService {
         const tweet = this.tweetRepository.create({ 
             ...createTweetDto,
             user: user,
+            hashtags: hashtags,
         });
         return this.tweetRepository.save(tweet);
     }
@@ -58,5 +66,27 @@ export class TweetService {
                 user: false,
             },
         });
+    }
+
+    public async updateTweet(updateTweenDto: UpdateTweetDto) {
+        // find all hashtags
+        const hashtags =  updateTweenDto.hashtags!.length > 0 ? await this.hashtagService.findHashtags(updateTweenDto.hashtags!): [];
+       
+        // find the tweet by id 
+        const tweet = await this.tweetRepository.findOne({
+            where: { id: updateTweenDto.id },
+        })
+
+        
+        if (!tweet) {
+            throw new Error('Tweet not found');
+        }
+
+        // update the tweet
+        tweet.text = updateTweenDto.text ?? tweet.text;
+        tweet.imageUrl = updateTweenDto.imageUrl ?? tweet.imageUrl;
+        tweet.hashtags = hashtags.length > 0 ? hashtags : tweet.hashtags;
+        return this.tweetRepository.save(tweet);
+        
     }
 }
