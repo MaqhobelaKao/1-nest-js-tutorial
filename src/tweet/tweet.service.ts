@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Tweet } from './tweet.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTweetDto } from './dto/create-tweet.dto';
-import { HashtagService } from 'src/hasgtag/hashtag.service';
+import { HashtagService } from 'src/hashtag/hashtag.service';
 import { log } from 'console';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 

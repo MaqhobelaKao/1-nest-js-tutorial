@@ -6,7 +6,10 @@ import { TweetModule } from './tweet/tweet.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfileModule } from './profile/profile.module';
-import { HasgtagModule } from './hasgtag/hashtag.module';
+import { HashtagModule } from './hashtag/hashtag.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+const ENV = process.env.NODE_ENV;
 
 @Module({
   imports: [
@@ -14,17 +17,26 @@ import { HasgtagModule } from './hasgtag/hashtag.module';
     TweetModule,
     AuthModule,
     ProfileModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      database: 'nest_js_tutorials',
-      autoLoadEntities: true,
-      synchronize: true,
-      host: 'localhost',
-      port: 5432,
-      username: 'evershop',
-      password: 'evershop',
+    HashtagModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ENV ? `.env.${ENV}` : '.env',
     }),
-    HasgtagModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: configService.get<'postgres'>('DATABASE_TYPE'),
+        database: configService.get<string>('DATABASE_NAME'),
+        autoLoadEntities: true,
+        synchronize: true,
+        host: configService.get<string>('DATABASE_HOST'),
+        port: configService.get<number>('DATABASE_PORT'),
+        username:configService.get<string>('DATABASE_USERNAME'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+      }),
+    })
+    
   ],
   controllers: [AppController],
   providers: [AppService],

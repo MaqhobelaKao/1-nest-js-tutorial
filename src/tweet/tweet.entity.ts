@@ -1,4 +1,4 @@
-import { HashTag } from "src/hasgtag/hashtag.entity";
+import { HashTag } from "src/hashtag/hashtag.entity";
 import { User } from "src/users/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 

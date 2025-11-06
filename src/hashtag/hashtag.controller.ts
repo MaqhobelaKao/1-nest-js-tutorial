@@ -3,7 +3,7 @@ import { HashtagService } from './hashtag.service';
 import { CreateHashtagDto } from './dto/create-hashtag-dto';
 
 @Controller('hashtag')
-export class HasgtagController {
+export class HashtagController {
     constructor(private readonly hashTagService: HashtagService) { }
 
     @Post()
