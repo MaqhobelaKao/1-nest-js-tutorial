@@ -7,6 +7,7 @@ import { CreateTweetDto } from './dto/create-tweet.dto';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { log } from 'console';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
+import { PaginationDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Injectable()
 export class TweetService {
@@ -37,9 +38,12 @@ export class TweetService {
         return this.tweetRepository.save(tweet);
     }
 
-    public async getTweets(): Promise<Tweet[]> {
-
+    public async getTweets(paginationQueryDto: PaginationDto): Promise<Tweet[]> {
+        console.log(paginationQueryDto);
+        
         return this.tweetRepository.find({
+            skip: (paginationQueryDto.page! - 1) * paginationQueryDto?.limit!,
+            take: paginationQueryDto.limit,
             relations: {
                 user: true,
             },
@@ -47,12 +51,14 @@ export class TweetService {
     }
 
 
-    public async getTweetsById(id: number): Promise<Tweet[]> {
+    public async getTweetsById(id: number, paginationQueryDto: PaginationDto): Promise<Tweet[]> {
         return this.tweetRepository.find({
             where: {id: id},
             relations: {
                 user: true,
             },
+            skip: (paginationQueryDto.page! - 1) * paginationQueryDto?.limit!,
+            take: paginationQueryDto.limit,
         })
     }
 
