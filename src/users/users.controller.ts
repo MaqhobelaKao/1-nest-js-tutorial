@@ -21,7 +21,7 @@ export class UsersController {
 
     @Get(':id')
     getUserById(@Param('id', ParseIntPipe) id) {
-        return this.usersService.getUserById(parseInt(id));
+        return this.usersService.findUserById(parseInt(id));
     }
     
     

@@ -20,7 +20,7 @@ export class TweetService {
 
 
     public async createTweet(createTweetDto: CreateTweetDto): Promise<Tweet> {
-        const user = await this.usersService.getUserById(createTweetDto.userId);
+        const user = await this.usersService.findUserById(createTweetDto.userId);
         const hashtags = await this.hashtagService.findHashtags(createTweetDto.hashtags!);
 
         log('hashtags are ', hashtags);
@@ -57,7 +57,7 @@ export class TweetService {
     }
 
     public async getTweetsByUserId(userId: number): Promise<Tweet[]> {
-        const user = await this.usersService.getUserById(userId);
+        const user = await this.usersService.findUserById(userId);
 
         if(!user) {
             throw new NotFoundException(`User with id ${userId} not found`);

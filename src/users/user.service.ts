@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -34,9 +34,6 @@ export class UsersService {
     }
   }
 
-  async getUserById(id: number) {
-    return await this.userRepository.findOneBy({ id: id });
-  }
 
   public async createUser(userDto: CreateUserDto) {
     try {
@@ -75,6 +72,24 @@ export class UsersService {
         );
       }
 
+      throw error;
+    }
+  }
+
+  public async findUserById(id: number) {
+    try {
+      const user = await this.userRepository.findOneBy({ id: id });
+
+      if (!user) {
+        throw new HttpException({
+          status: 404,
+          error: 'User not found',
+        }, HttpStatus.NOT_FOUND,{
+          description: `No user with the given ${id} exists`,
+        });
+      }
+      return this.userRepository.findOneBy({ id: id });
+    } catch (error) {
       throw error;
     }
   }
