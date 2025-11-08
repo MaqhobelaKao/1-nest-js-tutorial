@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/user.service';
 import { Repository } from 'typeorm';
 import { Tweet } from './tweet.entity';
@@ -38,6 +38,7 @@ export class TweetService {
     }
 
     public async getTweets(): Promise<Tweet[]> {
+
         return this.tweetRepository.find({
             relations: {
                 user: true,
@@ -56,6 +57,12 @@ export class TweetService {
     }
 
     public async getTweetsByUserId(userId: number): Promise<Tweet[]> {
+        const user = await this.usersService.getUserById(userId);
+
+        if(!user) {
+            throw new NotFoundException(`User with id ${userId} not found`);
+        }
+
         return this.tweetRepository.find({
             where: {
                 user: {
