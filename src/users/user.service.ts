@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { Profile } from 'src/profile/profile.entity';
-import { log } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +23,10 @@ export class UsersService {
         },
       });
     } catch (error) {
+      throw new RequestTimeoutException(
+        'Request timed out, please try again later.',
+        "Couldn't connect to database",
+      );
       throw new RequestTimeoutException(
         'Request timed out, please try again later.',
         "Couldn't connect to database",
@@ -54,18 +57,18 @@ export class UsersService {
       if (error.code === 'ECONNREFUSED') {
         throw new RequestTimeoutException(
           'Request timed out, please try again later.',
-         {
-          description: "Couldn't connect to database",
-         }
+          {
+            description: "Couldn't connect to database",
+          },
         );
-       
+      } else if (error.code === '23505') {
+        throw new RequestTimeoutException(
+          'There is duplicate value for username',
+          {
+            description: 'Duplicate Value',
+          },
+        );
       }
-      else if (error.code === 23505) {
-        throw new RequestTimeoutException('There is duplicate value for username',{
-          description: "Duplicate Value",
-        });
-      }
-      log(error);
     }
   }
 
