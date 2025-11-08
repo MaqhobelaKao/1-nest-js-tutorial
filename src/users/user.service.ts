@@ -1,4 +1,4 @@
-import { Injectable, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -41,6 +41,18 @@ export class UsersService {
   public async createUser(userDto: CreateUserDto) {
     try {
       // Create profile if provided
+      const existingUser = await this.userRepository.findOne({
+        where: [{ username: userDto.username }, { email: userDto.email }],
+      });
+
+      if (existingUser) {
+        throw new BadRequestException(
+          'There is already value for username or email',
+          {
+            description: 'Duplicate Value',
+          },
+        );
+      }
 
       // create user object
       const user = this.userRepository.create({
@@ -61,14 +73,9 @@ export class UsersService {
             description: "Couldn't connect to database",
           },
         );
-      } else if (error.code === '23505') {
-        throw new RequestTimeoutException(
-          'There is duplicate value for username',
-          {
-            description: 'Duplicate Value',
-          },
-        );
       }
+
+      throw error;
     }
   }
 
