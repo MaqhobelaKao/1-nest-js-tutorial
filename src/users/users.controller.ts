@@ -1,6 +1,9 @@
 import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
 import { UsersService } from "./user.service";
 import { CreateUserDto } from "./dtos/create-user.dto";
+import { PaginationDto } from "src/common/pagination/dto/pagination-query.dto";
+import { Paginatited } from "src/common/pagination/paginated.interface";
+import { User } from "./user.entity";
 
 
 @Controller('users')
@@ -10,13 +13,9 @@ export class UsersController {
 
     
     
-    @Get('')
-    getUsers (@Query('limit', 
-                new DefaultValuePipe(10), ParseIntPipe) limit: number, 
-                @Query('page',new DefaultValuePipe(1), ParseIntPipe) page: number,
-            ) 
-                {
-        return this.usersService.getUsers();
+    @Get()
+    getUsers (@Query() paginationDto: PaginationDto): Promise<Paginatited<User>> {
+        return this.usersService.getUsers(paginationDto);
     }
 
     @Get(':id')

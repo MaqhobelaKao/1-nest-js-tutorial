@@ -14,11 +14,7 @@ export class TweetController {
     @Get()
     public getAllTweets( @Query() getTweetsQueryDtop: GetTweetQueryDto ,) {
     
-        return this.tweetService.getTweets({
-            page: getTweetsQueryDtop.page,
-            limit: getTweetsQueryDtop.limit,
-        }
-        );
+        return this.tweetService.getTweets(getTweetsQueryDtop);
     }
 
     // localhost:3000/tweet/1
