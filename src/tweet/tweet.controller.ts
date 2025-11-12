@@ -3,6 +3,8 @@ import { TweetService } from './tweet.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationDto } from 'src/common/pagination/dto/pagination-query.dto';
+import { GetTweetQueryDto } from './dto/get-tweet-dto';
+import { log } from 'console';
 
 @Controller('tweets')
 export class TweetController {
@@ -10,9 +12,12 @@ export class TweetController {
 
 
     @Get()
-    public getAllTweets( @Query() paginationQueryDto: PaginationDto ,) {
-        return this.tweetService.getTweets(
-            paginationQueryDto
+    public getAllTweets( @Query() getTweetsQueryDtop: GetTweetQueryDto ,) {
+    
+        return this.tweetService.getTweets({
+            page: getTweetsQueryDtop.page,
+            limit: getTweetsQueryDtop.limit,
+        }
         );
     }
 
