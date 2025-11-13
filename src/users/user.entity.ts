@@ -18,7 +18,7 @@ export class User {
     @Column({ unique: true, type: 'varchar', length: 100, nullable: false })
     email: string;
 
-    @Column({ select: false })
+    @Column({ select: true })
     password: string;
 
     @OneToOne(() => Profile,(profile)=> profile.user, {cascade: ['insert']})

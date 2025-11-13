@@ -8,6 +8,7 @@ import { UserAlreadyExistException } from 'src/custom-exceptions/user-already-ex
 import { PaginationDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { Paginatited } from 'src/common/pagination/paginated.interface';
+import { UserNotFoundException } from 'src/custom-exceptions/user-not-found';
 
 @Injectable()
 export class UsersService {
@@ -103,5 +104,20 @@ export class UsersService {
 
   public async deleteUser(id: number) {
     return await this.userRepository.delete(id);
+  }
+
+  public async findByEmail(email: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email: email },
+      });
+      if(user) {
+        return user;
+      }
+      else
+        throw new UserNotFoundException(404);
+    } catch (error) {
+      throw error;
+    }
   }
 }

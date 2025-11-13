@@ -6,6 +6,8 @@ import { log } from 'console';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { HashingProvider } from './provider/hashing.provider';
 import { BcryptProvider } from './provider/bcrypt.provider';
+import { LoginDto } from './dto/login-dto';
+import { UserNotFoundException } from 'src/custom-exceptions/user-not-found';
 
 @Injectable()
 export class AuthService {
@@ -18,25 +20,41 @@ export class AuthService {
     private readonly hashingProvider: BcryptProvider,
   ) {}
 
- 
-  async logIn(email: string, password: string) {
-    log('Shared Secret:', this.authConfiguration.sharedSecret);
+  async logIn(userDto: LoginDto) {
+    try {
+      const user = await this.userService.findByEmail(userDto.email);
+
+      if (!user) {
+        this.IsAuthenticated = false;
+        throw new UserNotFoundException(404);
+      }
+
+      const isPasswordValid = await this.hashingProvider.comparePassword(
+        userDto.password,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        this.IsAuthenticated = false;
+        throw new UserNotFoundException(404)
+      }
+
+      this.IsAuthenticated = true;
+      return { message: 'Login successful' };
+    } catch (error) {
+      throw error;
+    }
   }
 
   public async signUp(user: CreateUserDto) {
     // create the user
     return await this.userService.createUser({
       ...user,
-      password: await this.hashingProvider.hashPassword(
-        user.password,
-      )
+      password: await this.hashingProvider.hashPassword(user.password),
     });
   }
-    
 
   async isLoggedIn() {
     return this.IsAuthenticated;
   }
-
-
 }
