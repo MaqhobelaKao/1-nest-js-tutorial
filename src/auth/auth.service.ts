@@ -1,10 +1,8 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
 import * as config from '@nestjs/config';
 import authConfig from './config/auth.config';
 import { UsersService } from 'src/users/user.service';
-import { log } from 'console';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
-import { HashingProvider } from './provider/hashing.provider';
 import { BcryptProvider } from './provider/bcrypt.provider';
 import { LoginDto } from './dto/login-dto';
 import { UserNotFoundException } from 'src/custom-exceptions/user-not-found';
