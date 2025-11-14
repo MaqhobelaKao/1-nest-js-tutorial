@@ -5,8 +5,7 @@ export default Joi.object({
     NODE_ENV: Joi.string()
         .valid('development', 'production', 'test', )
         .default('production'),
-    JWT_SECRET: Joi.string().default('defaultSecretKey'),
-    SECRET_KEY: Joi.string().required(),
+   
 
     // database configurations for postgresql database
     DATABASE_TYPE: Joi.string().valid('postgres').required(),
@@ -15,5 +14,11 @@ export default Joi.object({
     DATABASE_USERNAME: Joi.string().required(),
     DATABASE_PASSWORD: Joi.string().allow('').required(),
     DATABASE_NAME: Joi.string().required(),
+
+    // JWT configurations
+    JWT_TOKEN_SECRET: Joi.string().required(),
+    JWT_TOKEN_EXPIRESIN: Joi.number().default(3600),
+    JWT_TOKEN_AUDIENCE: Joi.string().required(),
+    JWT_TOKEN_ISSUER: Joi.string().required(),
 
 });

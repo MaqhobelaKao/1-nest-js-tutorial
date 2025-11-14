@@ -1,9 +1,10 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { UsersService } from "./user.service";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { PaginationDto } from "src/common/pagination/dto/pagination-query.dto";
 import { Paginatited } from "src/common/pagination/paginated.interface";
 import { User } from "./user.entity";
+import { AuthorizeGuard } from "src/auth/guard/authorize.guard";
 
 
 @Controller('users')
@@ -18,6 +19,7 @@ export class UsersController {
         return this.usersService.getUsers(paginationDto);
     }
 
+    @UseGuards(AuthorizeGuard)
     @Get(':id')
     getUserById(@Param('id', ParseIntPipe) id) {
         return this.usersService.findUserById(parseInt(id));
