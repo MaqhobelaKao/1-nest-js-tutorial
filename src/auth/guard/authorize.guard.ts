@@ -18,7 +18,11 @@ export class AuthorizeGuard  implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
    // Extract the token from the request headers
-    const token = request.headers['authorization'].split(' ')[1];
+   const authorizationHeader = request.headers['authorization']
+   if (!authorizationHeader) {
+      throw new UnauthorizedException('Authorization header not found');
+    }
+    const token = authorizationHeader.split(' ')[1];
     
 
    // Validate the token (implementation omitted for brevity)

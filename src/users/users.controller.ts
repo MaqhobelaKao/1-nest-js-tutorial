@@ -13,7 +13,7 @@ export class UsersController {
     constructor(private usersService: UsersService) {}
 
     
-    
+    @UseGuards(AuthorizeGuard)
     @Get()
     getUsers (@Query() paginationDto: PaginationDto): Promise<Paginatited<User>> {
         return this.usersService.getUsers(paginationDto);
@@ -31,6 +31,7 @@ export class UsersController {
     //     return this.usersService.createUser(user);
     // }
 
+    @UseGuards(AuthorizeGuard)
     @Delete(':id')
     public deleteUser(@Param('id', ParseIntPipe) id: number) {
         return this.usersService.deleteUser(id);
