@@ -19,13 +19,8 @@ export class AuthService {
   ) {}
 
   async logIn(userDto: LoginDto) {
-    try {
+   
       const user = await this.userService.findByEmail(userDto.email);
-
-      if (!user) {
-        this.IsAuthenticated = false;
-        throw new UserNotFoundException(404);
-      }
 
       const isPasswordValid = await this.hashingProvider.comparePassword(
         userDto.password,
@@ -34,14 +29,12 @@ export class AuthService {
 
       if (!isPasswordValid) {
         this.IsAuthenticated = false;
-        throw new UserNotFoundException(404)
+        throw new UnauthorizedException('Invalid credentials');
       }
 
       this.IsAuthenticated = true;
-      return { message: 'Login successful' };
-    } catch (error) {
-      throw error;
-    }
+      return { message: 'Login successful', user: user };
+  
   }
 
   public async signUp(user: CreateUserDto) {

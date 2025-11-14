@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -115,7 +115,7 @@ export class UsersService {
         return user;
       }
       else
-        throw new UserNotFoundException(404);
+        throw new RequestTimeoutException('User with the given email not found');
     } catch (error) {
       throw error;
     }
