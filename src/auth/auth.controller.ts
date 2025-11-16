@@ -13,7 +13,7 @@ export class AuthController {
     ) {}
 
     @Post('login')
-  
+    @AllowAnonymous()
     @HttpCode(HttpStatus.OK)
     login(@Body() user: LoginDto) {
         return this.authService.logIn(user);
