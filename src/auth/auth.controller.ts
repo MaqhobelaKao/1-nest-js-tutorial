@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { LoginDto } from './dto/login-dto';
 
+import { AllowAnonymous } from './decorators/anonymous.decorator';
+
 @Controller('auth')
 export class AuthController {
 
@@ -11,12 +13,14 @@ export class AuthController {
     ) {}
 
     @Post('login')
+  
     @HttpCode(HttpStatus.OK)
     login(@Body() user: LoginDto) {
         return this.authService.logIn(user);
     }
 
     @Post('signup')
+    @AllowAnonymous()
     signup(@Body() user: CreateUserDto) {
         return this.authService.signUp(user);
     }

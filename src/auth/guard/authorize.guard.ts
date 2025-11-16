@@ -4,6 +4,7 @@ import { log } from 'console';
 import { Observable } from 'rxjs';
 import authConfig from '../config/auth.config';
 import type { ConfigType } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
 
 
 @Injectable()
@@ -12,8 +13,21 @@ export class AuthorizeGuard  implements CanActivate {
         private readonly jwtService: JwtService,
         @Inject(authConfig.KEY)
         private readonly authConfiguration: ConfigType<typeof authConfig>,
+        private readonly reflector: Reflector,
     ) {}
   async canActivate(context: ExecutionContext):  Promise<boolean>  {
+
+    const isPublic = this.reflector.getAllAndOverride<boolean>('allowAnonymous', [
+        context.getHandler(),
+        context.getClass(),
+    ]);
+
+    log('isPublic', isPublic);
+      if (isPublic) {
+        return true;
+      }
+  
+
    // Extract the request object from the execution context
     const request = context.switchToHttp().getRequest();
 
