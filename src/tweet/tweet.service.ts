@@ -22,6 +22,7 @@ export class TweetService {
 
   public async createTweet(createTweetDto: CreateTweetDto): Promise<Tweet> {
     const user = await this.usersService.findUserById(createTweetDto.userId);
+    
     const hashtags = await this.hashtagService.findHashtags(
       createTweetDto.hashtags!,
     );

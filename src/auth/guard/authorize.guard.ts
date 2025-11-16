@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import authConfig from '../config/auth.config';
 import type { ConfigType } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
+import { REQUIRED_USER_KEY } from 'src/constacts/constants';
 
 
 @Injectable()
@@ -45,7 +46,9 @@ export class AuthorizeGuard  implements CanActivate {
     }
     // Here you would typically verify the token using a JWT service or similar
     try {
-        await this.jwtService.verifyAsync(token);
+        const payload = await this.jwtService.verifyAsync(token);
+        request[REQUIRED_USER_KEY] = payload; // Attach the payload to the request object
+        log('Payload', payload);
     } catch (error) {
         throw new UnauthorizedException('Invalid or expired token');
     }
