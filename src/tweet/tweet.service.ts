@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { UsersService } from 'src/users/user.service';
 import { Repository } from 'typeorm';
 import { Tweet } from './tweet.entity';
@@ -10,6 +10,7 @@ import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
 import { ActiveUserType } from 'src/auth/interfaces/active-user-type';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class TweetService {
@@ -22,24 +23,34 @@ export class TweetService {
   ) {}
 
   public async createTweet(createTweetDto: CreateTweetDto, activeUser: ActiveUserType): Promise<Tweet> {
-    const user = await this.usersService.findUserById(activeUser.sub ?? activeUser);
-    
-    const hashtags = await this.hashtagService.findHashtags(
-      createTweetDto.hashtags!,
-    );
 
-    log('hashtags are ', hashtags);
+    let user: User | null = null;
+    let hashtags: any[] = [];
+    try{
+      user = await this.usersService.findUserById(activeUser.sub ?? activeUser);
 
-    if (!user) {
-      throw new Error('User not found');
+
+      if(createTweetDto.hashtags && createTweetDto.hashtags.length > 0){
+        hashtags = await this.hashtagService.findHashtags(
+          createTweetDto.hashtags!,
+        );
+      }
+    }catch(err){
+      throw new RequestTimeoutException('Request timed out, please try again later');
     }
 
+    
     const tweet = this.tweetRepository.create({
       ...createTweetDto,
-      user: user,
+      user: user!,
       hashtags: hashtags,
     });
-    return this.tweetRepository.save(tweet);
+
+    try {
+      return this.tweetRepository.save(tweet);
+    } catch (error) {
+      throw new ConflictException(error);
+    }
   }
 
   public async getTweets(paginationQueryDto: PaginationDto) {
