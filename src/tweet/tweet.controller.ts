@@ -1,10 +1,11 @@
-import { Controller, Param, ParseIntPipe, Get, Body, Post, Patch, Delete, Query } from '@nestjs/common';
+import { Controller, Param, ParseIntPipe, Get, Body, Post, Patch, Delete, Query, Req } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import { CreateTweetDto } from './dto/create-tweet.dto';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { GetTweetQueryDto } from './dto/get-tweet-dto';
 import { log } from 'console';
+import { ActiveUser } from 'src/auth/decorators/activer.decorator';
 
 @Controller('tweets')
 export class TweetController {
@@ -17,6 +18,12 @@ export class TweetController {
         return this.tweetService.getTweets(getTweetsQueryDtop);
     }
 
+    @Get('user')
+    public getTweetsForUser(@ActiveUser('sub') user) {
+        log('user id is ', user);
+        return this.tweetService.getTweetsByUserId(parseInt(user));
+    }
+
     // localhost:3000/tweet/1
     @Get(':id')
     public getTweetsById(
@@ -27,13 +34,8 @@ export class TweetController {
     }
 
     @Post()
-    public createTweet(@Body() createTweetDto: CreateTweetDto) {
-        return this.tweetService.createTweet(createTweetDto);
-    }
-
-    @Get(':userId/tweets')
-    public getTweetsForUser(@Param('userId', ParseIntPipe) userId: number) {
-        return this.tweetService.getTweetsByUserId(userId);
+    public createTweet(@Body() createTweetDto: CreateTweetDto, @ActiveUser('sub') user) {
+       return this.tweetService.createTweet(createTweetDto, user);
     }
 
     @Patch()

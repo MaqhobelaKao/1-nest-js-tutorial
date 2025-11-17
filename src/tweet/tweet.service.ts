@@ -9,6 +9,7 @@ import { log } from 'console';
 import { UpdateTweetDto } from './dto/update-tweet.dto';
 import { PaginationDto } from 'src/common/pagination/dto/pagination-query.dto';
 import { PaginationProvider } from 'src/common/pagination/pagination.provider';
+import { ActiveUserType } from 'src/auth/interfaces/active-user-type';
 
 @Injectable()
 export class TweetService {
@@ -20,8 +21,8 @@ export class TweetService {
     private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  public async createTweet(createTweetDto: CreateTweetDto): Promise<Tweet> {
-    const user = await this.usersService.findUserById(createTweetDto.userId);
+  public async createTweet(createTweetDto: CreateTweetDto, activeUser: ActiveUserType): Promise<Tweet> {
+    const user = await this.usersService.findUserById(activeUser.sub ?? activeUser);
     
     const hashtags = await this.hashtagService.findHashtags(
       createTweetDto.hashtags!,

@@ -22,8 +22,7 @@ export class AuthorizeGuard  implements CanActivate {
         context.getHandler(),
         context.getClass(),
     ]);
-
-    log('isPublic', isPublic);
+    
       if (isPublic) {
         return true;
       }
@@ -48,7 +47,6 @@ export class AuthorizeGuard  implements CanActivate {
     try {
         const payload = await this.jwtService.verifyAsync(token);
         request[REQUIRED_USER_KEY] = payload; // Attach the payload to the request object
-        log('Payload', payload);
     } catch (error) {
         throw new UnauthorizedException('Invalid or expired token');
     }
